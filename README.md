@@ -144,7 +144,7 @@ server started
 /usr/local/bin/docker-entrypoint.sh: /docker-entrypoint-initdb.d/init-database.sh: /bin/bash^M: bad interpreter: No such file or directory
 ```
 
-То необходимо выполнить следующие команды в каталоге /postgres :
+То необходимо выполнить следующие команды в каталоге /postgres/script :
 
 ```
 sed -i -e 's/\r$//' init-database.sh
