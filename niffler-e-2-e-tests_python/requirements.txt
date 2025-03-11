@@ -1,5 +1,10 @@
 selene>=2.0.0rc7
 pytest
 requests
+pydantic
 python-dotenv
 faker
+
+psycopg2-binary
+sqlalchemy
+sqlmodel

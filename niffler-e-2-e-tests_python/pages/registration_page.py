@@ -19,9 +19,17 @@ class RegistrationPage:
     def check_registration_message(self):
         self.registration_message.should(have.text("Congratulations! You've registered"))
 
-    def check_error_message(self, username: str = None):
-        if username:
-            self.error_message.should(have.text(f'Username `{username}` already exists'))
+    def check_error_message(self, existed_username: str = None,
+                            not_allowed_username: bool = False, not_allowed_password: bool = False):
+        if existed_username:
+            self.error_message.should(have.text(f'Username `{existed_username}` already exists'))
+
+        elif not_allowed_username:
+            self.error_message.should(have.text('Allowed username length should be from 3 to 50 characters'))
+
+        elif not_allowed_password:
+            self.error_message.should(have.text('Allowed password length should be from 3 to 12 characters'))
+
         else:
             self.error_message.should(have.text('Passwords should be equal'))
 

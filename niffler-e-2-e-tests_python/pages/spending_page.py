@@ -9,6 +9,7 @@ class SpendingPage:
         self.spending_container = browser.element('#legend-container')
         self.amount = browser.element('input[name=amount]')
         self.currency = browser.element('#currency')
+        self.currency_dropdown = lambda currency: browser.element(f'.MuiButtonBase-root[data-value="{currency}"]')
         self.category = browser.element('input[name=category]')
         self.description = browser.element('input[name=description]')
         self.add_button = browser.element('button[type=submit]')
@@ -19,6 +20,9 @@ class SpendingPage:
         self.delete_confirm = browser.element("//button[normalize-space()='Delete']")
         self.no_spendings_title = browser.element('//p[.="There are no spendings"]')
         self.successful_edit_message = browser.element('//div[.="Spending is edited successfully"]')
+        self.user_icon = browser.element('[data-testid=PersonIcon]')
+        self.sign_out_button = browser.element('//li[normalize-space(.)="Sign out"]')
+        self.log_out_button = browser.element('//button[normalize-space(text())="Log out"]')
 
     def check_spending_page_titles(self):
         self.history.should(have.text('History of Spendings'))
@@ -46,10 +50,15 @@ class SpendingPage:
         self.description.clear().send_keys(text)
         self.save_changes.click()
 
+    def edit_category(self, category: str):
+        self.edit_button.click()
+        self.category.clear().send_keys(category)
+        self.save_changes.click()
+
     def edit_spending_currency(self, currency: str):
         self.edit_button.click()
         self.currency.click()
-        browser.element(f'.MuiButtonBase-root[data-value="{currency}"]').click()
+        self.currency_dropdown(currency).click()
         self.save_changes.click()
 
     def check_edit_should_be_successful(self):
@@ -60,6 +69,11 @@ class SpendingPage:
         self.delete_button.click()
         self.delete_confirm.click()
         self.no_spendings_title.should(be.visible)
+
+    def sign_out(self):
+        self.user_icon.click()
+        self.sign_out_button.click()
+        self.log_out_button.click()
 
 
 spending_page = SpendingPage()
