@@ -1,16 +1,27 @@
+import allure
+import pytest
 from faker.proxy import Faker
 from marks import Pages, TestData
 from pages.profile_page import profile
+
+
+pytestmark = [
+    pytest.mark.allure_label("Profile", label_type="epic"),
+    pytest.mark.allure_label('Profile actions', label_type="feature")
+    ]
+
 
 fake = Faker()
 TEST_CATEGORY = fake.word()
 
 
+@allure.story('Profile username is correct')
 @Pages.profile_page
 def test_username_in_profile_is_correct(envs, auth):
-    profile.check_username(envs.test_username)
+    profile.check_username_is_correct(envs.test_username)
 
 
+@allure.story('Change name')
 @Pages.profile_page
 def test_change_name_in_profile(auth):
     name = fake.name()
@@ -19,12 +30,14 @@ def test_change_name_in_profile(auth):
     profile.check_name_is_correct(name)
 
 
+@allure.story('Created category exists')
 @Pages.profile_page
 @TestData.category(TEST_CATEGORY)
 def test_category_exist(auth, category):
     profile.check_category_name(TEST_CATEGORY)
 
 
+@allure.story('Create a category')
 @Pages.profile_page
 def test_create_category(envs, auth, spend_db):
     new_category = TEST_CATEGORY
@@ -43,6 +56,7 @@ def test_create_category(envs, auth, spend_db):
             break
 
 
+@allure.story('Edit category')
 @Pages.profile_page
 @TestData.category(TEST_CATEGORY)
 def test_edit_category_name(envs, auth, category, spend_db):
@@ -55,6 +69,7 @@ def test_edit_category_name(envs, auth, category, spend_db):
     assert new_name in category_names, f"Category '{new_name}' not found in DB"
 
 
+@allure.story('Acrhive category')
 @Pages.profile_page
 @TestData.category(TEST_CATEGORY)
 def test_archive_category(envs, auth, category, spend_db):

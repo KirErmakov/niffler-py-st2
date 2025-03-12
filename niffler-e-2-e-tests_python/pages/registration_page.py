@@ -1,4 +1,5 @@
 from selene import browser, be, have
+import allure
 
 
 class RegistrationPage:
@@ -10,15 +11,18 @@ class RegistrationPage:
         self.registration_message = browser.element('.form__paragraph')
         self.error_message = browser.element('.form__error')
 
+    @allure.step('UI: Sign up')
     def sign_up(self, user: str, password: str, submit_password: str):
         self.username.should(be.blank).type(user)
         self.password.should(be.blank).type(password)
         self.submit_password.should(be.blank).type(submit_password)
         self.sing_up_button.click()
 
+    @allure.step('UI: Verify registration is successful')
     def check_registration_message(self):
         self.registration_message.should(have.text("Congratulations! You've registered"))
 
+    @allure.step('UI: Verify registration error message is correct')
     def check_error_message(self, existed_username: str = None,
                             not_allowed_username: bool = False, not_allowed_password: bool = False):
         if existed_username:
