@@ -1,13 +1,16 @@
 from urllib.parse import urljoin
 import allure
+
 import requests
 from allure_commons.types import AttachmentType
 from requests import Response
 from requests_toolbelt.utils.dump import dump_response
-from models.spend import Spend, SpendAdd
+
+from models.category import CategoryAdd
+from models.spend import Category
 
 
-class SpendsHttpClient:
+class CategoryHttpClient:
     session: requests.Session
     base_url: str
 
@@ -27,24 +30,19 @@ class SpendsHttpClient:
         attachment_name = response.request.method + " " + response.request.url
         allure.attach(dump_response(response), attachment_name, attachment_type=AttachmentType.TEXT)
 
-    @allure.step('API: Get list of spends')
-    def get_spends(self) -> list[Spend]:
-        response = self.session.get(urljoin(self.base_url, '/api/spends/all'))
+    @allure.step('API: Get list of categories')
+    def get_categories(self) -> list[Category]:
+        response = self.session.get(urljoin(self.base_url, "/api/categories/all"))
         self.raise_for_status(response)
-        return [Spend.model_validate(item) for item in response.json()]
 
-    @allure.step('API: Add spend')
-    def add_spends(self, spend: SpendAdd) -> Spend:
-        url = urljoin(self.base_url, "/api/spends/add")
-        response = self.session.post(url, json=spend.model_dump())
-        self.raise_for_status(response)
-        return Spend.model_validate(response.json())
+        return [Category.model_validate(item) for item in response.json()]
 
-    @allure.step('API: Remove spend')
-    def remove_spends(self, ids: list[str]):
-        url = urljoin(self.base_url, "/api/spends/remove")
-        response = self.session.delete(url, params={"ids": ids})
+    @allure.step('API: Add category')
+    def add_category(self, category: CategoryAdd):
+        response = self.session.post(urljoin(self.base_url, "/api/categories/add"), json=category.model_dump())
         self.raise_for_status(response)
+
+        return Category.model_validate(response.json())
 
     @staticmethod
     def raise_for_status(response: requests.Response):
