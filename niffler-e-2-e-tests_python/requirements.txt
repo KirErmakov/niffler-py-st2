@@ -11,3 +11,5 @@ sqlmodel
 
 allure-pytest
 requests-toolbelt
+curlify
+pkce
