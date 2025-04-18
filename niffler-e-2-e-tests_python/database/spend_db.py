@@ -1,12 +1,12 @@
 from typing import Sequence
 
 import allure
-from allure_commons.types import AttachmentType
 from sqlalchemy import create_engine, Engine, event
 from sqlmodel import Session, select
 
 from models.config import Envs
 from models.spend import Category
+from utils.allure_helpers import attach_sql
 
 
 class SpendDb:
@@ -14,14 +14,7 @@ class SpendDb:
 
     def __init__(self, envs: Envs):
         self.engine = create_engine(envs.spend_db_url)
-        event.listen(self.engine, "do_execute", fn=self.attach_sql)
-
-    @staticmethod
-    @allure.step('Attach SQL-query')
-    def attach_sql(cursor, statement, parameters, context):
-        statement_with_params = statement % parameters
-        name = statement.split(" ")[0] + " " + context.engine.url.database
-        allure.attach(statement_with_params, name=name, attachment_type=AttachmentType.TEXT)
+        event.listen(self.engine, "do_execute", fn=attach_sql)
 
     @allure.step('DB: Get user categories')
     def get_user_categories(self, username: str) -> Sequence[Category]:
