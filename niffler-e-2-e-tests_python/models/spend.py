@@ -10,7 +10,7 @@ class Spend(BaseModel):
     amount: float
     description: str
     category: Category
-    spendDate: datetime
+    spendDate: str
     currency: str
     username: str
 
